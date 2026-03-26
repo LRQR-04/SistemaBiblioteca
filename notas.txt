@@ -1,0 +1,89 @@
+biblioteca-system/
+│
+├── backend/
+│   ├── app/
+│   │   ├── main.py
+│   │
+│   │   ├── core/
+│   │   │   ├── config.py
+│   │   │   ├── database.py     
+│   │   │   └── security.py
+│   │   │
+│   │   ├── models/
+│   │   │   ├── libro.py
+│   │   │   ├── usuario.py
+│   │   │   └── prestamo.py
+│   │   │
+│   │   ├── schemas/
+│   │   │   ├── libro_schema.py
+│   │   │   ├── usuario_schema.py
+│   │   │   ├── prestamo_schema.py
+│   │   │   └── auth_schema.py
+│   │   │
+│   │   ├── services/
+│   │   │   ├── libro_service.py
+│   │   │   ├── usuario_service.py
+│   │   │   ├── prestamo_service.py
+│   │   │   └── auth_service.py
+│   │   │
+│   │   ├── routes/
+│   │   │   ├── libro_routes.py
+│   │   │   ├── usuario_routes.py
+│   │   │   ├── prestamo_routes.py
+│   │   │   └── auth_routes.py
+│   │   │
+│   │   ├── middleware/
+│   │   │   └── auth_middleware.py
+│   │   │
+│   │   ├── exceptions/
+│   │   │   └── custom_exceptions.py
+│   │   │
+│   │   └── utils/
+│   │       └── logger.py
+│   │
+│   ├── tests/
+│   │   └── test_sistema.py
+│   │
+│   ├── .env                    
+│   ├── requirements.txt
+│   └── run.py
+│
+├── frontend/
+│   ├── public/
+│   │
+│   ├── src/
+│   │   ├── assets/
+│   │   │
+│   │   ├── components/
+│   │   │   ├── Navbar.vue
+│   │   │   ├── LibroCard.vue
+│   │   │   └── ModalPrestamo.vue
+│   │   │
+│   │   ├── views/
+│   │   │   ├── Login.vue
+│   │   │   ├── Dashboard.vue
+│   │   │   ├── Libros.vue
+│   │   │   ├── Usuarios.vue
+│   │   │   └── Prestamos.vue
+│   │   │
+│   │   ├── router/
+│   │   │   └── index.js
+│   │   │
+│   │   ├── store/
+│   │   │   └── auth.js
+│   │   │
+│   │   ├── services/
+│   │   │   └── api.js
+│   │   │
+│   │   ├── composables/
+│   │   │   └── useAuth.js
+│   │   │
+│   │   ├── App.vue
+│   │   └── main.js
+│   │
+│   ├── .env     
+│   ├── package.json
+│   └── vite.config.js
+│
+├── .gitignore
+└── README.md
