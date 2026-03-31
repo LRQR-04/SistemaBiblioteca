@@ -44,3 +44,10 @@ __screenshots__/
 
 # Vite
 *.timestamp-*-*.mjs
+
+# Ignorar archivos
+estructura.txt
+notas.txt
+
+test.db
+.coverage
