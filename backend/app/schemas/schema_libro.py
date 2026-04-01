@@ -6,7 +6,7 @@ class LibroBase(BaseModel):
     isbn: str = Field(..., min_length=10, max_length=13)
     titulo: str
     autor: str
-    estado: Literal["disponible", "prestado", "reparación"] = "disponible"
+    estado: Literal["disponible", "prestado", "reparacion"] = "disponible"
     copias_disponibles: int = Field(..., ge=0)
 
 
@@ -15,6 +15,7 @@ class LibroCreate(LibroBase):
 
 
 class LibroUpdate(BaseModel):
+    isbn: Optional[str]
     titulo: Optional[str]
     autor: Optional[str]
     estado: Optional[str]
