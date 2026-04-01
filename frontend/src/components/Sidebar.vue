@@ -15,8 +15,8 @@ const menu = computed(() => {
     return [
       { name: 'Dashboard', path: '/', icon: LayoutDashboard },
       { name: 'Libros', path: '/libros', icon: BookOpen },
-      { name: 'Usuarios', path: '/usuarios', icon: Users },
       { name: 'Préstamos', path: '/prestamos', icon: Repeat },
+      { name: 'Usuarios', path: '/usuarios', icon: Users },
     ]
   }
 
