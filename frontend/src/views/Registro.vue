@@ -170,6 +170,14 @@ select {
   border: 1px solid #ddd;
   outline: none;
   transition: 0.3s;
+  font-size: 14px;
+  box-sizing: border-box;
+  appearance: none;
+}
+
+select {
+  background-color: #fff;
+  line-height: normal;
 }
 
 input:focus,
