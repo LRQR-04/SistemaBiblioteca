@@ -77,7 +77,6 @@ const guardar = async () => {
     emit('close')
   } catch (err) {
     const msg = err.response?.data?.detail
-    console.log(msg)
 
     if (msg === 'El correo ya está registrado') {
       errores.value.email = 'Este correo ya está en uso'
@@ -169,9 +168,16 @@ const guardar = async () => {
 
 .close-btn {
   border: none;
-  background: none;
-  font-size: 18px;
+  background: #f3f4f6;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
   cursor: pointer;
+  transition: 0.2s;
+}
+
+.close-btn:hover {
+  background: #e5e7eb;
 }
 
 .field {
@@ -218,6 +224,7 @@ select:focus {
   padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .btn-secondary {
@@ -226,6 +233,15 @@ select:focus {
   padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.btn-secondary:hover {
+  background: #d1d5db;
 }
 
 @keyframes fadeIn {
