@@ -5,7 +5,7 @@ from typing import Optional, Literal
 class UsuarioBase(BaseModel):
     nombre: str
     email: EmailStr
-    rol: Literal["estudiante", "profesor"] = "estudiante"
+    rol: Literal["estudiante", "profesor", "admin"] = "estudiante"
     prestamos_disponibles: int = 0
     estado: Literal["activo", "suspendido"] = "activo"
 
@@ -16,9 +16,8 @@ class UsuarioCreate(UsuarioBase):
 
 class UsuarioUpdate(BaseModel):
     nombre: Optional[str]
+    email: Optional[str]
     rol: Optional[str]
-    prestamos_disponibles: Optional[int]
-    estado: Optional[str]
 
 
 class UsuarioResponse(UsuarioBase):
