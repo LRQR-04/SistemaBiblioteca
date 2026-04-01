@@ -1,19 +1,17 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.database import get_db
 from app.models.usuario import Usuario
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
 
 def obtener_usuario_actual(
-    token: str = Depends(lambda: None), db: Session = Depends(get_db)
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
-    from fastapi.security import OAuth2PasswordBearer
-
-    oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
-    token = oauth2_scheme()
-
     try:
         payload = jwt.decode(
             token, settings.clave_secreta, algorithms=[settings.algoritmo]
