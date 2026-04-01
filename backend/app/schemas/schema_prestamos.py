@@ -4,8 +4,8 @@ from typing import Optional
 
 
 class PrestamoBase(BaseModel):
-    libro_id: int
-    usuario_id: int
+    usuario: str
+    libro: str
 
 
 class PrestamoCreate(PrestamoBase):
@@ -20,10 +20,10 @@ class PrestamoUpdate(BaseModel):
 
 class PrestamoResponse(BaseModel):
     id: int
-    libro_id: int
-    usuario_id: int
+    usuario: int
+    libro: int
     fecha_prestamo: date
-    fecha_devolucion: Optional[date]
+    fecha_devolucion: date
     estado: str
 
     class Config:
