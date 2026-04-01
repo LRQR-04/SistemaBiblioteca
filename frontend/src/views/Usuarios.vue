@@ -216,6 +216,12 @@ const handleSuccess = async (msg, type = 'success') => {
   padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(137, 85, 227, 0.25);
 }
 
 .filters {
@@ -229,6 +235,14 @@ select {
   padding: 8px;
   border-radius: 8px;
   border: 1px solid #ddd;
+  transition: 0.2s;
+}
+
+input:focus,
+select:focus {
+  border-color: #7125eb;
+  box-shadow: 0 0 0 2px rgba(137, 85, 227, 0.25);
+  outline: none;
 }
 
 .table-container {
@@ -330,6 +344,7 @@ input:checked + .slider::before {
   border: none;
   cursor: pointer;
   color: #6b7280;
+  transition: 0.2s;
 }
 
 .icon-btn:hover {
@@ -349,6 +364,10 @@ input:checked + .slider::before {
   background: #e5e7eb;
   border-radius: 6px;
   cursor: pointer;
+}
+
+.pagination button:hover {
+  background: #dbeafe;
 }
 
 .pagination button:disabled {
