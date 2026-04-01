@@ -48,8 +48,13 @@ const logout = () => {
 
     <div class="footer">
       <div class="user">
-        {{ auth.user?.sub }}
-        <small>{{ rol }}</small>
+        <div class="avatar">
+          {{ auth.user?.sub?.charAt(0).toUpperCase() }}
+        </div>
+        <div>
+          <strong>{{ auth.user?.sub }}</strong>
+          <small>{{ rol }}</small>
+        </div>
       </div>
 
       <button @click="logout">
@@ -62,75 +67,108 @@ const logout = () => {
 
 <style scoped>
 .sidebar {
-  width: 200px;
+  width: 240px;
   height: 100vh;
-  background: #1f2937;
+  background: linear-gradient(180deg, #1f2937, #111827);
   color: white;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
   padding: 20px;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .logo {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: 0.5px;
 }
 
 nav {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .link {
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: white;
+  gap: 12px;
+  color: #d1d5db;
   text-decoration: none;
-  padding: 10px;
-  border-radius: 8px;
-  transition: 0.2s;
-}
-
-.link:hover {
-  background: #374151;
-}
-
-.link.router-link-active {
-  background: #6366f1;
-}
-
-.footer {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.user {
+  padding: 10px 12px;
+  border-radius: 10px;
+  transition: all 0.25s ease;
   font-size: 14px;
 }
 
-small {
+.link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  transform: translateX(4px);
+}
+
+.link.router-link-active {
+  background: linear-gradient(135deg, #6366f1, #7c3aed);
+  color: white;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+footer {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #6366f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.user strong {
+  font-size: 14px;
+}
+
+.user small {
   display: block;
-  opacity: 0.7;
+  font-size: 12px;
+  opacity: 0.6;
 }
 
 button {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  background: #ef4444;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
   border: none;
   padding: 10px;
   color: white;
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
+  transition: 0.3s;
+  font-weight: 500;
+  margin-top: 20px;
 }
 
 button:hover {
-  background: #dc2626;
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }
 </style>
