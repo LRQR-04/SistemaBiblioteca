@@ -28,7 +28,7 @@ app.add_middleware(
 app.include_router(routes_autenticacion.router)
 # app.include_router(routes_libro.router)
 # app.include_router(routes_prestamo.router)
-# app.include_router(routes_usuario.router)
+app.include_router(routes_usuario.router)
 
 
 @app.get("/")
