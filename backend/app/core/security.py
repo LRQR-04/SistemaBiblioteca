@@ -3,7 +3,7 @@ from jose import jwt
 from passlib.context import CryptContext
 from app.core.config import settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 
 # Hash de contraseña
@@ -18,6 +18,6 @@ def verificar_contrasenia(password: str, hashed: str) -> bool:
 # Crear token
 def crear_token_acceso(data: dict):
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc()) + timedelta(minutes=settings.expiracion_token)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.expiracion_token)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, settings.clave_secreta, algorithm=settings.algoritmo)
