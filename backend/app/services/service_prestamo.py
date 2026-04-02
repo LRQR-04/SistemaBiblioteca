@@ -12,6 +12,9 @@ from app.exceptions.excepciones import (
     LibroNoEncontradoError,
     SinPrestamosDisponiblesError,
 )
+from app.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 DURACION_PRESTAMO = 3  # días
 
@@ -42,24 +45,35 @@ def realizar_prestamo(db: Session, libro_id: int, usuario_id: int) -> dict:
     Realiza un préstamo de un libro para un usuario.
     """
     try:
+        logger.info(
+            f"Intento de préstamo | usuario_id={usuario_id}, libro_id={libro_id}"
+        )
+
         libro = db.query(Libro).filter(Libro.id == libro_id).with_for_update().first()
         usuario = (
             db.query(Usuario).filter(Usuario.id == usuario_id).with_for_update().first()
         )
 
         if not usuario or usuario.estado != "activo":
+            logger.warning(
+                f"Préstamo denegado: usuario inactivo | usuario_id={usuario_id}"
+            )
             raise UsuarioSuspendidoError("El usuario no se encuentra activo")
 
         if usuario.prestamos_disponibles <= 0:
+            logger.warning(f"Sin préstamos disponibles | usuario_id={usuario_id}")
             raise SinPrestamosDisponiblesError("Ya no tienes préstamos disponibles")
 
         if not libro:
+            logger.warning(f"Libro no encontrado | libro_id={libro_id}")
             raise LibroNoEncontradoError("El libro no existe")
 
         if libro.estado != "disponible":
+            logger.warning(f"Sin stock disponible | libro_id={libro_id}")
             raise LibroNoEncontradoError("El libro no está disponible")
 
         if libro.copias_disponibles <= 0:
+            logger.warning(f"Sin stock disponible | libro_id={libro_id}")
             raise SinStockError("No hay copias disponibles")
 
         # Evitar préstamo duplicado activo
@@ -74,6 +88,9 @@ def realizar_prestamo(db: Session, libro_id: int, usuario_id: int) -> dict:
         )
 
         if prestamo_existente:
+            logger.warning(
+                f"Préstamo duplicado detectado | usuario_id={usuario_id}, libro_id={libro_id}"
+            )
             raise HTTPException(
                 status_code=400, detail="Ya existe un préstamo de este libro"
             )
@@ -97,9 +114,12 @@ def realizar_prestamo(db: Session, libro_id: int, usuario_id: int) -> dict:
         db.commit()
         db.refresh(prestamo)
 
+        logger.info(f"Préstamo realizado correctamente | prestamo_id={prestamo.id}")
         return map_prestamo_response(prestamo)
+
     except Exception as e:
         db.rollback()  # deshace los cambios si ocurre un error
+        logger.error("Error en realizar_prestamo", exc_info=True)
         raise e
 
 
@@ -108,6 +128,8 @@ def devolver_libro(db: Session, prestamo_id: int) -> dict:
     Devuelve un libro prestado y actualiza el estado del préstamo.
     """
     try:
+        logger.info(f"Intento de devolución | prestamo_id={prestamo_id}")
+
         prestamo = (
             db.query(Prestamo)
             .filter(Prestamo.id == prestamo_id)
@@ -116,9 +138,11 @@ def devolver_libro(db: Session, prestamo_id: int) -> dict:
         )
 
         if not prestamo:
+            logger.warning(f"Préstamo no encontrado | prestamo_id={prestamo_id}")
             raise HTTPException(status_code=404, detail="Préstamo no encontrado")
 
         if prestamo.estado == "devuelto":
+            logger.warning(f"Préstamo ya devuelto | prestamo_id={prestamo_id}")
             raise HTTPException(status_code=400, detail="El préstamo ya fue devuelto")
 
         libro = (
@@ -135,6 +159,9 @@ def devolver_libro(db: Session, prestamo_id: int) -> dict:
         )
 
         if not libro or not usuario:
+            logger.error(
+                f"Datos inconsistentes en devolución | prestamo_id={prestamo_id}"
+            )
             raise HTTPException(status_code=500, detail="Los datos son inconsistentes")
 
         # Actualizar datos
@@ -150,10 +177,12 @@ def devolver_libro(db: Session, prestamo_id: int) -> dict:
         db.commit()
         db.refresh(prestamo)
 
+        logger.info(f"Devolución exitosa | prestamo_id={prestamo.id}")
         return map_prestamo_response(prestamo)
 
     except Exception as e:
         db.rollback()
+        logger.error("Error en devolver_libro", exc_info=True)
         raise e
 
 
@@ -181,6 +210,8 @@ def listar_prestamos_usuario(
             .all()
         )
 
+        logger.info(f"Préstamos encontrados usuario={usuario_id}: {total}")
+
         return {
             "data": [
                 {
@@ -196,6 +227,7 @@ def listar_prestamos_usuario(
         }
 
     except Exception:
+        logger.error("Error al listar préstamos de usuario", exc_info=True)
         raise HTTPException(status_code=500, detail="Error al listar préstamos")
 
 
@@ -234,12 +266,15 @@ def listar_prestamos(
             .all()
         )
 
+        logger.info(f"Total préstamos encontrados: {total}")
+
         return {
             "data": [map_prestamo_response(p) for p in prestamos],
             "total": total,
         }
 
     except Exception:
+        logger.error("Error al listar préstamos", exc_info=True)
         raise HTTPException(status_code=500, detail="Error al listar préstamos")
 
 
@@ -250,6 +285,10 @@ def actualizar_estado_prestamo(
     Actualiza el estado de un préstamo existente.
     """
     try:
+        logger.info(
+            f"Actualizar estado préstamo | prestamo_id={prestamo_id}, estado={estado}"
+        )
+
         prestamo = (
             db.query(Prestamo)
             .options(joinedload(Prestamo.usuario), joinedload(Prestamo.libro))
@@ -259,16 +298,19 @@ def actualizar_estado_prestamo(
         )
 
         if not prestamo:
+            logger.warning(f"Préstamo no encontrado | prestamo_id={prestamo_id}")
             raise HTTPException(status_code=404, detail="Préstamo no encontrado")
 
         estados_validos = ["activo", "devuelto", "vencido"]
 
         if estado and estado not in estados_validos:
+            logger.warning(f"Estado inválido: {estado}")
             raise HTTPException(status_code=400, detail="Estado inválido")
 
         # Validar fecha
         if fecha_devolucion:
             if fecha_devolucion <= prestamo.fecha_prestamo:
+                logger.warning(f"Fecha inválida en préstamo {prestamo_id}")
                 raise HTTPException(
                     status_code=400,
                     detail="La fecha de devolución debe ser mayor a la fecha de préstamo",
@@ -281,6 +323,7 @@ def actualizar_estado_prestamo(
 
             # Solo si estaba activo
             if prestamo.estado != "activo":
+                logger.warning(f"Préstamo ya procesado | prestamo_id={prestamo_id}")
                 raise HTTPException(
                     status_code=400,
                     detail="El préstamo ya fue procesado",
@@ -303,6 +346,8 @@ def actualizar_estado_prestamo(
         db.commit()
         db.refresh(prestamo)
 
+        logger.info(f"Estado actualizado correctamente | prestamo_id={prestamo.id}")
+
         return {
             "id": prestamo.id,
             "usuario": prestamo.usuario.email,
@@ -318,4 +363,5 @@ def actualizar_estado_prestamo(
 
     except Exception:
         db.rollback()
+        logger.error("Error al actualizar estado de préstamo", exc_info=True)
         raise HTTPException(status_code=500, detail="Error al actualizar estado")

@@ -4,6 +4,9 @@ from sqlalchemy import func, or_
 from app.models.usuario import Usuario
 from app.schemas.schema_usuario import UsuarioCreate, UsuarioUpdate
 from app.core.security import hashear_contrasenia
+from app.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 def registrar_usuario(db: Session, user_data: UsuarioCreate) -> Usuario:
@@ -11,6 +14,8 @@ def registrar_usuario(db: Session, user_data: UsuarioCreate) -> Usuario:
     Registra un nuevo usuario en la base de datos.
     """
     try:
+        logger.info(f"Intento de registro de usuario: {user_data.email}")
+
         existente = (
             db.query(Usuario)
             .filter(func.lower(Usuario.email) == user_data.email.lower())
@@ -18,6 +23,7 @@ def registrar_usuario(db: Session, user_data: UsuarioCreate) -> Usuario:
         )
 
         if existente:
+            logger.warning(f"Registro fallido: email duplicado -> {user_data.email}")
             raise HTTPException(status_code=401, detail="El correo ya está registrado")
 
         hashed_password = hashear_contrasenia(user_data.contrasenia)
@@ -41,6 +47,10 @@ def registrar_usuario(db: Session, user_data: UsuarioCreate) -> Usuario:
         db.add(nuevo_usuario)
         db.commit()
         db.refresh(nuevo_usuario)
+
+        logger.info(
+            f"Usuario registrado correctamente: ID={nuevo_usuario.id}, email={nuevo_usuario.email}"
+        )
         return nuevo_usuario
 
     except HTTPException as e:
@@ -49,6 +59,7 @@ def registrar_usuario(db: Session, user_data: UsuarioCreate) -> Usuario:
 
     except Exception:
         db.rollback()
+        logger.error("Error inesperado al registrar usuario", exc_info=True)
         raise HTTPException(status_code=500, detail="Error interno del servidor")
 
 
@@ -84,9 +95,11 @@ def obtener_usuarios(
             .all()
         )
 
+        logger.info(f"Usuarios encontrados: {total}")
         return {"data": usuarios, "total": total}
 
     except Exception:
+        logger.error("Error al obtener usuarios", exc_info=True)
         raise HTTPException(status_code=500, detail="Error al obtener usuarios")
 
 
@@ -98,13 +111,17 @@ def actualizar_usuario(
     Actualiza los datos de un usuario existente.
     """
     try:
+        logger.info(f"Intento de actualización usuario ID={user_id}")
+
         usuario = db.query(Usuario).filter(Usuario.id == user_id).first()
 
         if not usuario:
+            logger.warning(f"Usuario no encontrado ID={user_id}")
             raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
         # El admin no puede editar otros admins
         if usuario.rol == "admin" and usuario.id != current_user.id:
+            logger.warning(f"Intento de editar otro admin | usuario_id={user_id}")
             raise HTTPException(
                 status_code=403, detail="No es posible editar otro admin"
             )
@@ -117,6 +134,7 @@ def actualizar_usuario(
                 .first()
             )
             if existente:
+                logger.warning(f"Email duplicado en actualización -> {data.email}")
                 raise HTTPException(
                     status_code=400, detail="El correo ya está registrado"
                 )
@@ -132,6 +150,7 @@ def actualizar_usuario(
         db.commit()
         db.refresh(usuario)
 
+        logger.info(f"Usuario actualizado correctamente ID={usuario.id}")
         return usuario
 
     except HTTPException as e:
@@ -140,6 +159,7 @@ def actualizar_usuario(
 
     except Exception:
         db.rollback()
+        logger.error("Error al actualizar usuario", exc_info=True)
         raise HTTPException(status_code=500, detail="Error al actualizar usuario")
 
 
@@ -149,13 +169,17 @@ def cambiar_estado_usuario(db: Session, user_id: int, current_user: Usuario) -> 
     Cambia el estado de un usuario (activo/suspendido).
     """
     try:
+        logger.info(f"Cambio de estado usuario ID={user_id}")
+
         usuario = db.query(Usuario).filter(Usuario.id == user_id).first()
 
         if not usuario:
+            logger.warning(f"Usuario no encontrado ID={user_id}")
             raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
         # El admin no puede modificar otros admins
         if usuario.rol == "admin" and usuario.id != current_user.id:
+            logger.warning(f"Intento de modificar otro admin | usuario_id={user_id}")
             raise HTTPException(
                 status_code=403, detail="No se puede modificar otro admin"
             )
@@ -164,6 +188,9 @@ def cambiar_estado_usuario(db: Session, user_id: int, current_user: Usuario) -> 
 
         db.commit()
 
+        logger.info(
+            f"Estado actualizado correctamente ID={usuario.id} -> {usuario.estado}"
+        )
         return {"message": "Estado actualizado correctamente"}
 
     except HTTPException as e:
@@ -172,6 +199,7 @@ def cambiar_estado_usuario(db: Session, user_id: int, current_user: Usuario) -> 
 
     except Exception:
         db.rollback()
+        logger.error("Error al cambiar estado de usuario", exc_info=True)
         raise HTTPException(status_code=500, detail="Error al cambiar estado")
 
 
