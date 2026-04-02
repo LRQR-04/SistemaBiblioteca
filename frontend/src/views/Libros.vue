@@ -103,7 +103,7 @@ const totalPages = computed(() => Math.ceil(total.value / 10))
               <th>Autor</th>
               <th>Estatus</th>
               <th>Copias disponibles</th>
-              <th>Acciones</th>
+              <th v-if="isAdmin">Acciones</th>
             </tr>
           </thead>
 
@@ -118,7 +118,7 @@ const totalPages = computed(() => Math.ceil(total.value / 10))
                 </span>
               </td>
               <td>{{ libro.copias_disponibles }}</td>
-              <td>
+              <td v-if="isAdmin">
                 <button class="icon-btn" @click="editar(libro)">
                   <Pencil size="16" />
                 </button>
