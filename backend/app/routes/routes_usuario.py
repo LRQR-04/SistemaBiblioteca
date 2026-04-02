@@ -23,13 +23,21 @@ def listar_usuarios(
     limit: int = Query(10, le=10),
     db: Session = Depends(get_db),
 ):
+    """
+    Lista todos los usuarios del sistema (solo admin).
+    """
     return obtener_usuarios(db, search, status, page, limit)
 
 
 @router.post(
     "", dependencies=[Depends(require_roles("admin"))], response_model=UsuarioResponse
 )
-def crear_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
+def crear_usuario(
+    usuario: UsuarioCreate, db: Session = Depends(get_db)
+) -> UsuarioResponse:
+    """
+    Crea un nuevo usuario en el sistema (solo admin).
+    """
     return registrar_usuario(db, usuario)
 
 
@@ -43,7 +51,10 @@ def editar_usuario(
     data: UsuarioUpdate,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(obtener_usuario_actual),
-):
+) -> UsuarioResponse:
+    """
+    Edita la información de un usuario existente (solo admin).
+    """
     return actualizar_usuario(db, user_id, data, current_user)
 
 
@@ -52,5 +63,8 @@ def cambiar_estado(
     user_id: int,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(obtener_usuario_actual),
-):
+) -> UsuarioResponse:
+    """
+    Cambia el estado de un usuario (activo/suspendido) (solo admin).
+    """
     return cambiar_estado_usuario(db, user_id, current_user)

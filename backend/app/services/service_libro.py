@@ -5,7 +5,10 @@ from app.models.libro import Libro
 from app.schemas.schema_libro import LibroCreate, LibroUpdate
 
 
-def registrar_libro(db: Session, libro_data: LibroCreate):
+def registrar_libro(db: Session, libro_data: LibroCreate) -> Libro:
+    """
+    Registra un nuevo libro en la base de datos.
+    """
     try:
         # Validar ISBN único
         existente = (
@@ -33,7 +36,10 @@ def registrar_libro(db: Session, libro_data: LibroCreate):
 
 
 # Listar (Búsqueda + filtro + paginación)
-def listar_libros(db: Session, search: str, status: str, page: int, limit: int):
+def listar_libros(db: Session, search: str, status: str, page: int, limit: int) -> dict:
+    """
+    Lista libros con búsqueda, filtro por estado y paginación.
+    """
     try:
         query = db.query(Libro)
 
@@ -65,7 +71,10 @@ def listar_libros(db: Session, search: str, status: str, page: int, limit: int):
         raise HTTPException(status_code=500, detail="Error al listar libros")
 
 
-def actualizar_libro(db: Session, libro_id: int, datos: LibroUpdate):
+def actualizar_libro(db: Session, libro_id: int, datos: LibroUpdate) -> Libro:
+    """
+    Actualiza la información de un libro existente.
+    """
     try:
         libro = db.query(Libro).filter(Libro.id == libro_id).first()
 

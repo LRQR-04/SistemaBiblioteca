@@ -4,7 +4,10 @@ from app.services.service_usuario import obtener_usuario_por_email
 from app.core.security import verificar_contrasenia, crear_token_acceso
 
 
-def login(db: Session, email: str, password: str):
+def login(db: Session, email: str, password: str) -> str:
+    """
+    Autentica a un usuario y genera un token JWT.
+    """
     usuario = obtener_usuario_por_email(db, email)
 
     if not usuario:

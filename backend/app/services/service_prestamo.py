@@ -16,11 +16,17 @@ from app.exceptions.excepciones import (
 DURACION_PRESTAMO = 3  # días
 
 
-def actualizar_estado_libro(libro: Libro):
+def actualizar_estado_libro(libro: Libro) -> None:
+    """
+    Actualiza el estado de un libro según sus copias disponibles..
+    """
     libro.estado = "disponible" if libro.copias_disponibles > 0 else "prestado"
 
 
-def map_prestamo_response(p: Prestamo):
+def map_prestamo_response(p: Prestamo) -> dict:
+    """
+    Mapea un objeto Prestamo a un diccionario de respuesta.
+    """
     return {
         "id": p.id,
         "usuario": p.usuario.email,
@@ -31,7 +37,10 @@ def map_prestamo_response(p: Prestamo):
     }
 
 
-def realizar_prestamo(db: Session, libro_id: int, usuario_id: int):
+def realizar_prestamo(db: Session, libro_id: int, usuario_id: int) -> dict:
+    """
+    Realiza un préstamo de un libro para un usuario.
+    """
     try:
         libro = db.query(Libro).filter(Libro.id == libro_id).with_for_update().first()
         usuario = (
@@ -94,7 +103,10 @@ def realizar_prestamo(db: Session, libro_id: int, usuario_id: int):
         raise e
 
 
-def devolver_libro(db: Session, prestamo_id: int):
+def devolver_libro(db: Session, prestamo_id: int) -> dict:
+    """
+    Devuelve un libro prestado y actualiza el estado del préstamo.
+    """
     try:
         prestamo = (
             db.query(Prestamo)
@@ -147,7 +159,10 @@ def devolver_libro(db: Session, prestamo_id: int):
 
 def listar_prestamos_usuario(
     db: Session, usuario_id: int, search: str, status: str, page: int, limit: int
-):
+) -> dict:
+    """
+    Lista los préstamos de un usuario con filtros y paginación.
+    """
     try:
         query = db.query(Prestamo).join(Libro).filter(Prestamo.usuario_id == usuario_id)
 
@@ -184,7 +199,12 @@ def listar_prestamos_usuario(
         raise HTTPException(status_code=500, detail="Error al listar préstamos")
 
 
-def listar_prestamos(db: Session, search: str, status: str, page: int, limit: int):
+def listar_prestamos(
+    db: Session, search: str, status: str, page: int, limit: int
+) -> dict:
+    """
+    Lista todos los préstamos del sistema con filtros y paginación.
+    """
     try:
         query = db.query(Prestamo).options(
             joinedload(Prestamo.usuario), joinedload(Prestamo.libro)
@@ -225,7 +245,10 @@ def listar_prestamos(db: Session, search: str, status: str, page: int, limit: in
 
 def actualizar_estado_prestamo(
     db: Session, prestamo_id: int, estado: str, fecha_devolucion=None
-):
+) -> dict:
+    """
+    Actualiza el estado de un préstamo existente.
+    """
     try:
         prestamo = (
             db.query(Prestamo)

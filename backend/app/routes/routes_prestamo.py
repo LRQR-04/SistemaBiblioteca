@@ -26,7 +26,10 @@ def crear_prestamo(
     data: PrestamoCreate,
     db: Session = Depends(get_db),
     user=Depends(obtener_usuario_actual),
-):
+) -> PrestamoResponse:
+    """
+    Crea un nuevo préstamo para el usuario autenticado.
+    """
     try:
         return realizar_prestamo(db, data.libro_id, user.id)
 
@@ -46,6 +49,9 @@ def mis_prestamos(
     db: Session = Depends(get_db),
     user=Depends(obtener_usuario_actual),
 ):
+    """
+    Lista los préstamos del usuario autenticado.
+    """
     return listar_prestamos_usuario(
         db,
         user.id,
@@ -64,6 +70,9 @@ def listar_prestamos(
     limit: int = Query(10, le=10),
     db: Session = Depends(get_db),
 ):
+    """
+    Lista todos los préstamos del sistema (solo admin).
+    """
     return listar_prestamos_service(
         db,
         search,
@@ -78,7 +87,10 @@ def devolver(
     prestamo_id: int,
     db: Session = Depends(get_db),
     user=Depends(obtener_usuario_actual),
-):
+) -> PrestamoResponse:
+    """
+    Devuelve un libro prestado.
+    """
     prestamo = devolver_libro(db, prestamo_id)
 
     if not prestamo:
@@ -92,7 +104,10 @@ def actualizar_estado(
     prestamo_id: int,
     data: PrestamoUpdate,
     db: Session = Depends(get_db),
-):
+) -> PrestamoResponse:
+    """
+    Actualiza el estado de un préstamo (solo admin).
+    """
     return actualizar_estado_prestamo(
         db, prestamo_id, data.estado, data.fecha_devolucion
     )

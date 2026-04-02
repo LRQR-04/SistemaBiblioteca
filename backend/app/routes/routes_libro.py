@@ -12,7 +12,10 @@ router = APIRouter(prefix="/libros", tags=["Libros"])
 @router.post(
     "", response_model=LibroResponse, dependencies=[Depends(require_roles("admin"))]
 )
-def crear_libro(libro: LibroCreate, db: Session = Depends(get_db)):
+def crear_libro(libro: LibroCreate, db: Session = Depends(get_db)) -> LibroResponse:
+    """
+    Crea un nuevo libro en el sistema.
+    """
     return service_libro.registrar_libro(db, libro)
 
 
@@ -24,6 +27,9 @@ def listar_libros(
     limit: int = Query(10, le=10),
     db: Session = Depends(get_db),
 ):
+    """
+    Lista los libros disponibles en el sistema con filtros opcionales.
+    """
     return service_libro.listar_libros(db, search, status, page, limit)
 
 
@@ -32,5 +38,10 @@ def listar_libros(
     response_model=LibroResponse,
     dependencies=[Depends(require_roles("admin"))],
 )
-def actualizar_libro(libro_id: int, datos: LibroUpdate, db: Session = Depends(get_db)):
+def actualizar_libro(
+    libro_id: int, datos: LibroUpdate, db: Session = Depends(get_db)
+) -> LibroResponse:
+    """
+    Actualiza la información de un libro existente.
+    """
     return service_libro.actualizar_libro(db, libro_id, datos)

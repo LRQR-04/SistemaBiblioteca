@@ -6,12 +6,16 @@ from app.core.config import settings
 from app.core.database import get_db
 from app.models.usuario import Usuario
 
+# Esquema de seguridad OAuth2 para autenticación con tokens JWT
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def obtener_usuario_actual(
     token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
-):
+) -> Usuario:
+    """
+    Obtiene el usuario actual a partir de un token JWT.
+    """
     try:
         payload = jwt.decode(
             token, settings.clave_secreta, algorithms=[settings.algoritmo]

@@ -4,6 +4,10 @@ from sqlalchemy.orm import relationship
 
 
 class Usuario(Base):
+    """
+    Modelo ORM que representa un usuario en la base de datos.
+    """
+
     __tablename__ = "usuarios"
 
     id = Column(Integer, primary_key=True, index=True)

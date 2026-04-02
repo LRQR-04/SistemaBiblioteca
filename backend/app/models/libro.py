@@ -4,6 +4,10 @@ from sqlalchemy.orm import relationship
 
 
 class Libro(Base):
+    """
+    Modelo ORM que representa un libro en la base de datos.
+    """
+
     __tablename__ = "libros"
 
     id = Column(Integer, primary_key=True, index=True)

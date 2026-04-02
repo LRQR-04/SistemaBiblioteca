@@ -4,6 +4,10 @@ from app.core.database import Base
 
 
 class Prestamo(Base):
+    """
+    Modelo ORM que representa un préstamo en la base de datos.
+    """
+
     __tablename__ = "prestamos"
 
     id = Column(Integer, primary_key=True, index=True)

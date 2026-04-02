@@ -6,7 +6,10 @@ from app.schemas.schema_usuario import UsuarioCreate, UsuarioUpdate
 from app.core.security import hashear_contrasenia
 
 
-def registrar_usuario(db: Session, user_data: UsuarioCreate):
+def registrar_usuario(db: Session, user_data: UsuarioCreate) -> Usuario:
+    """
+    Registra un nuevo usuario en la base de datos.
+    """
     try:
         existente = (
             db.query(Usuario)
@@ -52,7 +55,10 @@ def registrar_usuario(db: Session, user_data: UsuarioCreate):
 # Listar usuarios (paginación + filtros)
 def obtener_usuarios(
     db: Session, search: str = "", status: str = "all", page: int = 1, limit: int = 10
-):
+) -> dict:
+    """
+    Obtiene una lista de usuarios con filtros y paginación.
+    """
     try:
         query = db.query(Usuario)
 
@@ -87,7 +93,10 @@ def obtener_usuarios(
 # Actualizar datos del usuario
 def actualizar_usuario(
     db: Session, user_id: int, data: UsuarioUpdate, current_user: Usuario
-):
+) -> Usuario:
+    """
+    Actualiza los datos de un usuario existente.
+    """
     try:
         usuario = db.query(Usuario).filter(Usuario.id == user_id).first()
 
@@ -135,7 +144,10 @@ def actualizar_usuario(
 
 
 # Cambiar estado del usuario
-def cambiar_estado_usuario(db: Session, user_id: int, current_user: Usuario):
+def cambiar_estado_usuario(db: Session, user_id: int, current_user: Usuario) -> dict:
+    """
+    Cambia el estado de un usuario (activo/suspendido).
+    """
     try:
         usuario = db.query(Usuario).filter(Usuario.id == user_id).first()
 
@@ -163,9 +175,15 @@ def cambiar_estado_usuario(db: Session, user_id: int, current_user: Usuario):
         raise HTTPException(status_code=500, detail="Error al cambiar estado")
 
 
-def obtener_usuario_por_email(db: Session, email: str):
+def obtener_usuario_por_email(db: Session, email: str) -> Usuario | None:
+    """
+    Obtiene un usuario por su correo electrónico.
+    """
     return db.query(Usuario).filter(func.lower(Usuario.email) == email.lower()).first()
 
 
-def verificar_usuario_activo(usuario: Usuario):
+def verificar_usuario_activo(usuario: Usuario) -> bool:
+    """
+    Verifica si un usuario está activo.
+    """
     return usuario.estado == "activo"
