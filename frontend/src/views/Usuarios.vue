@@ -176,6 +176,7 @@ const handleSuccess = async (msg, type = 'success') => {
           </tr>
         </tbody>
       </table>
+      <p v-if="usuarios.length === 0" class="empty">No se encontraron resultados</p>
     </div>
 
     <!-- Paginación -->
@@ -372,5 +373,11 @@ input:checked + .slider::before {
 
 .pagination button:disabled {
   opacity: 0.5;
+}
+
+.empty {
+  text-align: center;
+  padding: 12px;
+  color: #6b7280;
 }
 </style>
