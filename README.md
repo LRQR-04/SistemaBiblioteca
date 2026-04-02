@@ -129,7 +129,7 @@ El sistema sigue una arquitectura modular basada en capas:
 
 📌 Diagrama de arquitectura:
 
-![Arquitectura](./assets/docs/images/arquitectura.png)
+![Arquitectura](./assets/docs/images/Arquitectura.png)
 
 ---
 
