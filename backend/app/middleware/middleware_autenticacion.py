@@ -20,21 +20,17 @@ def obtener_usuario_actual(
     Obtiene el usuario actual a partir de un token JWT.
     """
     try:
-        logger.info("Validando token de acceso")
-
         payload = jwt.decode(
             token, settings.clave_secreta, algorithms=[settings.algoritmo]
         )
         user_id = payload.get("user_id")
 
         if user_id is None:
-            logger.warning("Token inválido: no contiene user_id")
             raise HTTPException(status_code=401, detail="Token inválido")
 
         user = db.query(Usuario).filter(Usuario.id == user_id).first()
 
         if not user:
-            logger.warning(f"Token válido pero usuario no existe: user_id={user_id}")
             raise HTTPException(status_code=401, detail="Usuario no encontrado")
 
         logger.info(

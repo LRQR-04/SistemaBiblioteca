@@ -1,4 +1,5 @@
 import logging
+from logging import Logger
 import os
 
 # Crear carpeta logs si no existe
@@ -17,5 +18,8 @@ logging.basicConfig(
 
 
 # Función para obtener logger por módulo
-def get_logger(nombre: str):
+def get_logger(nombre: str) -> Logger:
+    """
+    Obtiene un objeto logger de la librería estándar `logging`.
+    """
     return logging.getLogger(nombre)
