@@ -143,7 +143,7 @@ El sistema utiliza un modelo relacional con las siguientes entidades:
 
 📌 Diagrama Entidad-Relación:
 
-![Diagrama ER](./docs/images/diagrama-er.png)
+![Diagrama ER](./assets/docs/images/DiagramaBD.png)
 
 ---
 
