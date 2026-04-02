@@ -26,10 +26,12 @@ const alertType = ref('success')
 const isAdmin = computed(() => auth.user?.rol === 'admin')
 
 const cargar = async () => {
+  const filtroStatus = isAdmin.value ? status.value : 'disponible'
+
   const res = await api.get('/libros', {
     params: {
       search: search.value,
-      status: status.value,
+      status: filtroStatus,
       page: page.value,
       limit: 10,
     },
@@ -86,7 +88,7 @@ const totalPages = computed(() => Math.ceil(total.value / 10))
       <div class="filters">
         <input v-model="search" placeholder="Buscar por título o autor..." @input="buscar" />
 
-        <select v-model="status" @change="buscar">
+        <select v-if="isAdmin" v-model="status" @change="buscar">
           <option value="all">Todos</option>
           <option value="disponible">Disponibles</option>
           <option value="prestado">Prestados</option>
@@ -101,7 +103,7 @@ const totalPages = computed(() => Math.ceil(total.value / 10))
               <th>ISBN</th>
               <th>Título</th>
               <th>Autor</th>
-              <th>Estatus</th>
+              <th v-if="isAdmin">Estatus</th>
               <th>Copias disponibles</th>
               <th v-if="isAdmin">Acciones</th>
             </tr>
@@ -112,7 +114,7 @@ const totalPages = computed(() => Math.ceil(total.value / 10))
               <td>{{ libro.isbn }}</td>
               <td>{{ libro.titulo }}</td>
               <td>{{ libro.autor }}</td>
-              <td>
+              <td v-if="isAdmin">
                 <span class="badge" :class="libro.estado">
                   {{ libro.estado }}
                 </span>
