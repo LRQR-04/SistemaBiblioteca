@@ -5,6 +5,9 @@ import ModalCrearLibro from '../components/ModalCrearLibro.vue'
 import ModalEditarLibro from '../components/ModalEditarLibro.vue'
 import Alerta from '../components/Alerta.vue'
 import { Pencil } from 'lucide-vue-next'
+import { useAuthStore } from '@/stores/autenticacion'
+
+const auth = useAuthStore()
 
 const libros = ref([])
 const page = ref(1)
@@ -19,6 +22,8 @@ const libroSeleccionado = ref(null)
 
 const alertMsg = ref('')
 const alertType = ref('success')
+
+const isAdmin = computed(() => auth.user?.rol === 'admin')
 
 const cargar = async () => {
   const res = await api.get('/libros', {
@@ -74,7 +79,7 @@ const totalPages = computed(() => Math.ceil(total.value / 10))
 
       <div class="header">
         <h2>Libros</h2>
-        <button class="btn-primary" @click="nuevo">+ Nuevo</button>
+        <button v-if="isAdmin" class="btn-primary" @click="nuevo">+ Nuevo</button>
       </div>
 
       <!-- Filtros -->
@@ -157,7 +162,7 @@ const totalPages = computed(() => Math.ceil(total.value / 10))
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #0ea5e9, #2563eb); /* 🔷 azul libros */
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
   color: white;
   border: none;
   padding: 8px 14px;
