@@ -10,7 +10,7 @@ from app.core.database import Base, get_db
 from app.main import app
 from app.models import *
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
@@ -26,7 +26,8 @@ def db():
     transaction = connection.begin()
 
     session = TestingSessionLocal(bind=connection)
-    Base.metadata.create_all(bind=connection)
+    Base.metadata.drop_all(bind=connection)  # limpia tablas
+    Base.metadata.create_all(bind=connection)  # crea tablas nuevas
 
     yield session
 
