@@ -3,25 +3,19 @@ from datetime import date
 from typing import Optional
 
 
-class PrestamoBase(BaseModel):
-    usuario: str
-    libro: str
-
-
-class PrestamoCreate(PrestamoBase):
-    fecha_prestamo: date
-    fecha_devolucion: date
+class PrestamoCreate(BaseModel):
+    libro_id: int
 
 
 class PrestamoUpdate(BaseModel):
-    fecha_devolucion: Optional[date]
-    estado: Optional[str]
+    estado: Optional[str] = None
+    fecha_devolucion: Optional[date] = None
 
 
 class PrestamoResponse(BaseModel):
     id: int
-    usuario: int
-    libro: int
+    usuario: str
+    libro: str
     fecha_prestamo: date
     fecha_devolucion: date
     estado: str
