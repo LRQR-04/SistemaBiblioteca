@@ -169,6 +169,7 @@ Se implementaron pruebas unitarias usando Pytest para validar:
 Ejecutar pruebas:
 
 ```bash
+cd backend
 pytest
 ```
 
@@ -212,15 +213,7 @@ backend/logs/errors.log
 
 ## Conclusiones
 
-El desarrollo de este sistema permitió aplicar de forma integral:
-
-- Diseño de arquitectura modular
-- Implementación de lógica de negocio robusta
-- Validación mediante pruebas unitarias
-- Manejo adecuado de errores
-- Documentación técnica clara
-
-Estas prácticas son fundamentales para construir sistemas escalables, mantenibles y seguros.
+Las etapas del desarrollo permiten construir un sistema organizado, funcional y confiable. Desde la definición de herramientas y estándares hasta las pruebas y documentación, cada fase contribuye a mejorar la calidad del software y facilitar su mantenimiento. En conjunto, estas prácticas aseguran un desarrollo profesional y alineado a las necesidades reales del sistema.
 
 ---
 
