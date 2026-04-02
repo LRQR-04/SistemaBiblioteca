@@ -4,6 +4,8 @@ Sistema web desarrollado para la administración de una biblioteca, permitiendo 
 
 Este proyecto fue desarrollado bajo un enfoque de buenas prácticas de ingeniería de software, incluyendo estándares de codificación, pruebas unitarias, manejo de errores y documentación técnica.
 
+---
+
 ## Características principales
 
 - Gestión de libros (registro, búsqueda, actualización de estado)
@@ -13,6 +15,8 @@ Este proyecto fue desarrollado bajo un enfoque de buenas prácticas de ingenier�
 - Manejo robusto de errores con excepciones personalizadas
 - Pruebas unitarias
 - Sistema de logging de errores
+
+---
 
 ## Tecnologías utilizadas
 
@@ -30,6 +34,8 @@ Este proyecto fue desarrollado bajo un enfoque de buenas prácticas de ingenier�
 - Vite
 - Axios
 - Pinia (gestión de estado)
+
+---
 
 ## Estructura del proyecto
 
@@ -59,6 +65,8 @@ biblioteca-system/
 │   └── services/          # Comunicación API
 ```
 
+---
+
 ## Instalación y ejecución
 
 ### 1. Clonar repositorio
@@ -79,10 +87,12 @@ pip install -r requirements.txt
 
 #### Variables de entorno (.env)
 
+```
 DATABASE_URL=sqlite:///./app/data/biblioteca.bd
 SECRET_KEY=tu_clave_secreta
 ALGORITMO=HS256
 EXPIRACION_TOKEN=120
+```
 
 #### Ejecutar servidor
 
@@ -99,9 +109,15 @@ npm install
 npm run dev
 ```
 
+#### Variables de entorno (.env)
+
+```
+VITE_API_URL=direccion_servidor_backend
+```
+
 ---
 
-## 🧠 Arquitectura del sistema
+## Arquitectura del sistema
 
 El sistema sigue una arquitectura modular basada en capas:
 
@@ -113,11 +129,11 @@ El sistema sigue una arquitectura modular basada en capas:
 
 📌 Diagrama de arquitectura:
 
-![Arquitectura](./docs/images/arquitectura.png)
+![Arquitectura](.assets/docs/images/arquitectura.png)
 
 ---
 
-## 🗄️ Base de datos
+## Base de datos
 
 El sistema utiliza un modelo relacional con las siguientes entidades:
 
@@ -131,7 +147,7 @@ El sistema utiliza un modelo relacional con las siguientes entidades:
 
 ---
 
-## 🔄 Lógica de negocio (Préstamos)
+## Lógica de negocio (Préstamos)
 
 El sistema implementa reglas críticas:
 
@@ -142,7 +158,7 @@ El sistema implementa reglas críticas:
 
 ---
 
-## 🧪 Pruebas
+## Pruebas
 
 Se implementaron pruebas unitarias usando Pytest para validar:
 
@@ -158,7 +174,7 @@ pytest
 
 ---
 
-## ⚠️ Manejo de errores
+## Manejo de errores
 
 Se implementaron excepciones personalizadas:
 
@@ -174,17 +190,17 @@ backend/logs/errors.log
 
 ---
 
-## 📏 Estándares de desarrollo
+## Estándares de desarrollo
 
-- ✔️ PEP 8 (estilo de código)
-- ✔️ Type Hints obligatorios
-- ✔️ Docstrings (formato Google)
-- ✔️ Arquitectura modular
-- ✔️ Separación de responsabilidades
+- PEP 8 (estilo de código)
+- Type Hints obligatorios
+- Docstrings (formato Google)
+- Arquitectura modular
+- Separación de responsabilidades
 
 ---
 
-## 👨‍💻 Manual de uso
+## Manual de uso
 
 1. Iniciar el backend
 2. Ejecutar el frontend
@@ -194,16 +210,7 @@ backend/logs/errors.log
 
 ---
 
-## 📸 Interfaz del sistema (pendiente)
-
-![Login](./docs/images/login.png)
-![Dashboard](./docs/images/dashboard.png)
-![Libros](./docs/images/libros.png)
-![Prestamos](./docs/images/prestamos.png)
-
----
-
-## 📌 Conclusiones
+## Conclusiones
 
 El desarrollo de este sistema permitió aplicar de forma integral:
 
@@ -217,9 +224,9 @@ Estas prácticas son fundamentales para construir sistemas escalables, mantenibl
 
 ---
 
-## 👤 Autor
+## Autor
 
-- Tu Nombre
-- GitHub: https://github.com/tuusuario
+- LRQR-04
+- GitHub: https://github.com/LRQR-04
 
 ---
