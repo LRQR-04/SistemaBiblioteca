@@ -1,69 +1,78 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, watch } from 'vue'
 import api from '../services/api'
+
+const props = defineProps({
+  prestamo: Object,
+})
 
 const emit = defineEmits(['close', 'success'])
 
-const libros = ref([])
-const libro_id = ref('')
+const form = ref({
+  estado: '',
+  fecha_devolucion: '',
+})
 
 const errores = ref({
-  libro_id: '',
+  estado: '',
+  fecha_devolucion: '',
   general: '',
 })
 
-/* Cargar libros disponibles */
-const cargarLibros = async () => {
-  try {
-    const res = await api.get('/libros', {
-      params: { status: 'disponible' },
-    })
-
-    libros.value = res.data.data || []
-  } catch (err) {
-    errores.value.general = 'Error al cargar libros'
-  }
-}
-
-onMounted(() => {
-  cargarLibros()
-})
+watch(
+  () => props.prestamo,
+  (val) => {
+    if (val) {
+      form.value = {
+        estado: val.estado,
+        fecha_devolucion: val.fecha_devolucion,
+      }
+    }
+  },
+  { immediate: true },
+)
 
 const validar = () => {
-  errores.value.libro_id = ''
-  errores.value.general = ''
-
-  if (!libro_id.value) {
-    errores.value.libro_id = 'Selecciona un libro'
+  errores.value = {
+    estado: '',
+    fecha_devolucion: '',
+    general: '',
   }
 
-  return !errores.value.libro_id
+  if (!form.value.estado) {
+    errores.value.estado = 'Selecciona un estado'
+  }
+
+  if (!form.value.fecha_devolucion) {
+    errores.value.fecha_devolucion = 'Selecciona una fecha'
+  }
+
+  return !errores.value.estado && !errores.value.fecha_devolucion
 }
 
-watch(libro_id, validar)
+watch(form, validar, { deep: true })
 
 const guardar = async () => {
   if (!validar()) return
 
-  const confirmacion = confirm('¿Realmente quiere solicitar este libro?')
+  const confirmacion = confirm('¿Confirmar cambios en el préstamo?')
   if (!confirmacion) return
 
   try {
-    await api.post('/prestamos/mis', {
-      libro_id: libro_id.value,
+    await api.patch(`/prestamos/${props.prestamo.id}`, {
+      estado: form.value.estado,
+      fecha_devolucion: form.value.fecha_devolucion,
     })
 
-    emit('success', 'Préstamo generado correctamente')
+    emit('success', 'Préstamo actualizado')
     emit('close')
   } catch (err) {
-    const msg = err.response?.data?.detail || 'Error al generar préstamo'
+    const msg = err.response?.data?.detail || 'Error al actualizar'
 
-    if (msg === 'Ya no cuentas con préstamos disponibles') {
-      errores.value.general = msg
-    } else if (msg === 'No hay copias disponibles') {
-      errores.value.general = msg
-    } else if (msg === 'El usuario no se encuentra activo') {
-      errores.value.general = msg
+    if (msg.includes('fecha')) {
+      errores.value.fecha_devolucion = msg
+    } else if (msg.includes('Estado')) {
+      errores.value.estado = msg
     } else {
       errores.value.general = msg
     }
@@ -75,30 +84,35 @@ const guardar = async () => {
   <div class="overlay" @click.self="$emit('close')">
     <div class="modal-card">
       <div class="header">
-        <h3>Nuevo Préstamo</h3>
+        <h3>Editar Préstamo</h3>
         <button class="close-btn" @click="$emit('close')">✕</button>
       </div>
 
-      <!-- Libro -->
+      <!-- Estado -->
       <div class="field">
-        <select v-model="libro_id" :class="{ inputError: errores.libro_id }">
-          <option value="">Selecciona un libro</option>
-
-          <option v-for="l in libros" :key="l.id" :value="l.id">
-            {{ l.titulo }}
-          </option>
+        <select v-model="form.estado" :class="{ inputError: errores.estado }">
+          <option value="">Selecciona estado</option>
+          <option value="activo">Activo</option>
+          <option value="devuelto">Devuelto</option>
+          <option value="vencido">Vencido</option>
         </select>
+        <span class="error-text">{{ errores.estado }}</span>
+      </div>
 
-        <span class="error-text">{{ errores.libro_id }}</span>
+      <!-- Fecha devolución -->
+      <div class="field">
+        <input
+          type="date"
+          v-model="form.fecha_devolucion"
+          :class="{ inputError: errores.fecha_devolucion }"
+        />
+        <span class="error-text">{{ errores.fecha_devolucion }}</span>
       </div>
 
       <!-- Error general -->
       <span v-if="errores.general" class="error-box">
         {{ errores.general }}
       </span>
-
-      <!-- Estado vacío -->
-      <div v-if="libros.length === 0" class="empty">No hay libros disponibles</div>
 
       <!-- Botones -->
       <div class="actions">
@@ -160,6 +174,7 @@ const guardar = async () => {
   margin-bottom: 12px;
 }
 
+input,
 select {
   padding: 10px;
   border-radius: 10px;
@@ -168,6 +183,7 @@ select {
   transition: 0.3s;
 }
 
+input:focus,
 select:focus {
   border-color: #22c55e;
   box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
@@ -188,13 +204,6 @@ select:focus {
   padding: 8px;
   border-radius: 6px;
   font-size: 12px;
-}
-
-.empty {
-  text-align: center;
-  font-size: 12px;
-  color: #6b7280;
-  padding: 8px;
 }
 
 .actions {
