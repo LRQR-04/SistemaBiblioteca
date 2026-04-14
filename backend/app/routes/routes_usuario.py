@@ -63,7 +63,7 @@ def cambiar_estado(
     user_id: int,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(obtener_usuario_actual),
-) -> UsuarioResponse:
+):
     """
     Cambia el estado de un usuario (activo/suspendido) (solo admin).
     """
